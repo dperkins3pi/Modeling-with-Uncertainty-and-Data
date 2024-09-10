@@ -72,7 +72,15 @@ def compute_highest_entropy(all_guess_results, allowed_guesses):
     Returns:
         (string) The highest-entropy guess
     """
-    raise NotImplementedError("Problem 3 incomplete.")
+    n = len(allowed_guesses)
+    entropies = []
+    for i in range(n):
+        guess_results = all_guess_results[i]
+        unique_values = np.unique(guess_results, return_counts=True)[1] # Find number of unique occurences
+        probabilities = unique_values / np.sum(unique_values)  # Get probabilities
+        entropy = np.sum(np.log2(probabilities) * -probabilities)  # Calculate entropy
+        entropies.append(entropy)
+    return allowed_guesses[np.argmax(entropies)]
 
 # Problem 3
 def filter_words(all_guess_results, allowed_guesses, possible_secret_words, guess, result):
@@ -104,7 +112,28 @@ def filter_words(all_guess_results, allowed_guesses, possible_secret_words, gues
         (list of str) The filtered list of possible secret words
         (2-D ndarray) The filtered array of guess results
     """
-    raise NotImplementedError("Problem 4 incomplete.")
+    # Convert data to right type
+    possible_secret_words = np.array(possible_secret_words)
+    
+    word_length = len(guess) # Should always be 5
+    assert word_length == 5, "Guess does not contain 5 letters"
+    
+    # Convert the actual result to correct format
+    float_result = 0
+    for i in range(5):  # Convert result to the right format
+        float_result += result[i] * 3**i
+    
+    # Find all results for the guess
+    guess_index = allowed_guesses.index(guess)
+    guess_results = all_guess_results[guess_index]
+
+    mask = (guess_results == float_result)  # Get indices of of words that yield the same result
+    possible_secret_words = possible_secret_words[mask]
+    all_guess_results = all_guess_results[:, mask]
+    
+    return possible_secret_words, all_guess_results
+    
+    
 
 # Problem 4
 def play_game_naive(game, all_guess_results, possible_secret_words, allowed_guesses, word=None, display=False):
@@ -134,8 +163,19 @@ def play_game_naive(game, all_guess_results, possible_secret_words, allowed_gues
     """
     # Initialize the game
     game.start_game(word=word, display=display)
+    
+    while True:
+        if len(possible_secret_words) == 1:  # Choose the only possible word if onw is left
+            guess = possible_secret_words[0]
+        else:
+            guess = np.random.choice(allowed_guesses)  # Choose randomly from valid words
+        result, num_guesses = game.make_guess(guess)  # Make the guess
+        if game.is_finished(): break
+        possible_secret_words, all_guess_results = filter_words(all_guess_results, allowed_guesses, possible_secret_words, guess, result)
+        
+    return num_guesses
 
-    raise NotImplementedError("Problem 5 incomplete.")
+    
 
 # Problem 5
 def play_game_entropy(game, all_guess_results, possible_secret_words, allowed_guesses, word=None, display=False):
@@ -165,8 +205,17 @@ def play_game_entropy(game, all_guess_results, possible_secret_words, allowed_gu
     """
     # Initialize the game
     game.start_game(word=word, display=display)
-
-    raise NotImplementedError("Problem 6 incomplete.")
+    
+    while True:
+        if len(possible_secret_words) == 1:  # Choose the only possible word if onw is left
+            guess = possible_secret_words[0]
+        else:
+            guess = compute_highest_entropy(all_guess_results, allowed_guesses)  # Choose word with highest entropy
+        result, num_guesses = game.make_guess(guess)  # Make the guess
+        if game.is_finished(): break
+        possible_secret_words, all_guess_results = filter_words(all_guess_results, allowed_guesses, possible_secret_words, guess, result)
+        
+    return num_guesses
 
 # Problem 6
 def compare_algorithms(all_guess_results, possible_secret_words, allowed_guesses, n=20):
@@ -191,13 +240,62 @@ def compare_algorithms(all_guess_results, possible_secret_words, allowed_guesses
         (float) - average number of guesses needed by naive algorithm
         (float) - average number of guesses needed by entropy algorithm
     """
-    raise NotImplementedError("Problem 7 incomplete.")
+    naive_guesses = 0
+    entropy_guesses = 0
+    for i in range(n):
+        game = wordle.WordleGame()  # Create game
+        naive_guesses += play_game_naive(game, all_guess_results, possible_secret_words, allowed_guesses, word=None, display=False)
+        game = wordle.WordleGame()  # Reset game
+        entropy_guesses += play_game_entropy(game, all_guess_results, possible_secret_words, allowed_guesses, word=None, display=False)
+        
+    return naive_guesses / n, entropy_guesses / n  # Return averages
+        
 
 
 if __name__=="__main__":
     # Prob 1
-    print(get_guess_result("excel", "boxed"))
-    print(get_guess_result("stare", "train"))
-    print(get_guess_result("green", "pages"))
-    print(get_guess_result("abate", "vials"))
-    print(get_guess_result("robot", "older"))
+    # print(get_guess_result("excel", "boxed"))
+    # print(get_guess_result("stare", "train"))
+    # print(get_guess_result("green", "pages"))
+    # print(get_guess_result("abate", "vials"))
+    # print(get_guess_result("robot", "older"))
+    
+    # Prob 2
+    # all_guess_results = np.load("all_guess_results.npy")
+    # allowed_guesses = load_words("allowed_guesses.txt")
+    # print(compute_highest_entropy(all_guess_results, allowed_guesses))
+    
+    # Prob 3
+    # all_guess_results = np.load("all_guess_results.npy")
+    # allowed_guesses = load_words("allowed_guesses.txt")
+    # possible_secret_words = load_words("possible_secret_words.txt")
+    # guess = "boxes"
+    # result = (0, 0 ,0, 2, 1)
+    # possible_secret_words, guess_results = filter_words(all_guess_results, allowed_guesses, possible_secret_words, guess, result)
+    # print(len(possible_secret_words), possible_secret_words)
+    # print(np.shape(guess_results), guess_results)
+    
+    # Prob 4
+    # game = wordle.WordleGame()
+    # all_guess_results = np.load("all_guess_results.npy")
+    # allowed_guesses = load_words("allowed_guesses.txt")
+    # possible_secret_words = load_words("possible_secret_words.txt")
+    # num_guesses = play_game_naive(game, all_guess_results, possible_secret_words, allowed_guesses, word=None, display=True)
+    # print(num_guesses)
+    
+    # Prob 5
+    # game = wordle.WordleGame()
+    # all_guess_results = np.load("all_guess_results.npy")
+    # allowed_guesses = load_words("allowed_guesses.txt")
+    # possible_secret_words = load_words("possible_secret_words.txt")
+    # print(play_game_entropy(game, all_guess_results, possible_secret_words, allowed_guesses, word=None, display=True))
+    
+    # Prob 6
+    # all_guess_results = np.load("all_guess_results.npy")
+    # allowed_guesses = load_words("allowed_guesses.txt")
+    # possible_secret_words = load_words("possible_secret_words.txt")
+    # naive_guesses, entropy_guesses = compare_algorithms(all_guess_results, possible_secret_words, allowed_guesses, n=20)
+    # print("Naive method:", naive_guesses)
+    # print("Entropy method:", entropy_guesses)
+    
+    pass
