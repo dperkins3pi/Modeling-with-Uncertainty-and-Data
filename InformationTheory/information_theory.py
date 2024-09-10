@@ -1,9 +1,9 @@
 """
 Information Theory Lab
 
-Name
-Section
-Date
+Danny Perkins
+MATH 403 (001)
+9/8/24
 """
 
 import numpy as np
@@ -25,7 +25,27 @@ def get_guess_result(guess, true_word):
     Returns:
         result (list of integers) - the result of the guess, as described above
     """
-    raise NotImplementedError("Problem 1 incomplete.")
+    # Make sure the input makes sense
+    assert len(guess) == 5, "The guess does not have five letters"
+    assert len(true_word) == 5, "The true word does not have five letters"
+        
+    output = [-1]*5   # Initialize all spots as -1
+    for i in range(5):
+        if(guess[i] == true_word[i]): output[i] = 2
+        elif(guess[i] not in true_word): output[i] = 0
+        else:
+            count = true_word.count(guess[i])
+            for j in range(5):  # Fill green spots first
+                if(guess[i] == guess[j] and guess[j] == true_word[j]):
+                    output[j] = 2
+                    count -= 1
+            for k in range(5):  # Remove 1 from count for each time this letter was already yellow
+                if(guess[i] == guess[k] and output[k] == 1): count -= 1
+            if count > 0: output[i] = 1   
+            else: output[i] = 0 # Already used up all spots
+    
+    return output
+
 
 # Helper function
 def load_words(filen):
@@ -173,3 +193,11 @@ def compare_algorithms(all_guess_results, possible_secret_words, allowed_guesses
     """
     raise NotImplementedError("Problem 7 incomplete.")
 
+
+if __name__=="__main__":
+    # Prob 1
+    print(get_guess_result("excel", "boxed"))
+    print(get_guess_result("stare", "train"))
+    print(get_guess_result("green", "pages"))
+    print(get_guess_result("abate", "vials"))
+    print(get_guess_result("robot", "older"))
