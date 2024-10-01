@@ -291,11 +291,11 @@ if __name__=="__main__":
     # print(play_game_entropy(game, all_guess_results, possible_secret_words, allowed_guesses, word=None, display=True))
     
     # Prob 6
-    # all_guess_results = np.load("all_guess_results.npy")
-    # allowed_guesses = load_words("allowed_guesses.txt")
-    # possible_secret_words = load_words("possible_secret_words.txt")
-    # naive_guesses, entropy_guesses = compare_algorithms(all_guess_results, possible_secret_words, allowed_guesses, n=20)
-    # print("Naive method:", naive_guesses)
-    # print("Entropy method:", entropy_guesses)
+    all_guess_results = np.load("all_guess_results.npy")
+    allowed_guesses = load_words("allowed_guesses.txt")
+    possible_secret_words = load_words("possible_secret_words.txt")
+    naive_guesses, entropy_guesses = compare_algorithms(all_guess_results, possible_secret_words, allowed_guesses, n=20)
+    print("Naive method:", naive_guesses)
+    print("Entropy method:", entropy_guesses)
     
     pass
