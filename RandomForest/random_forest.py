@@ -1,9 +1,9 @@
 """
 Random Forest Lab
 
-Name
-Section
-Date
+Daniel Perkins
+MATH 403 (001)
+10/6/24
 """
 from platform import uname
 import graphviz
@@ -35,7 +35,7 @@ class Question:
             sample ((n,), ndarray): New sample to classify
         Returns:
             (bool): How the sample compares to the question"""
-        raise NotImplementedError('Problem 1 Incomplete')
+        return sample[self.column] >= self.value
 
     def __repr__(self):
         return "Is %s >= %s?" % (self.features, str(float(self.value)))
@@ -49,7 +49,12 @@ def partition(data, question):
         left ((j,n), ndarray): Portion of the data matching the question
         right ((m-j, n), ndarray): Portion of the data NOT matching the question
     """
-    raise NotImplementedError('Problem 1 Incomplete')
+    left, right = [], []
+    for datum in data:  # Split up data
+        if question.match(datum): left.append(datum)
+        else: right.append(datum)
+    # Convert to correct shape and return it
+    return np.array(left).reshape(-1, len(datum)), np.array(right).reshape(-1, len(datum))
 
 
 # Helper function
@@ -112,7 +117,27 @@ def find_best_split(data, feature_names, min_samples_leaf=5, random_subset=False
     Returns:
         (float): Best info gain
         (Question): Best question"""
-    raise NotImplementedError('Problem 2 Incomplete')
+    best_gain = 0
+    best_question = None
+
+    # Get the indices of columns where values differ
+    # cols_with_diff = np.any(data != data[0, :], axis=0)
+    # indices = np.where(cols_with_diff)[0].tolist()[:-1]
+    indices = np.arange(len(feature_names) - 1)
+    
+    for i in indices:  # For each column
+        unique_vals = set(data[:, i])  # Set of unique values
+        for val in unique_vals:    # For each row value
+            question = Question(column=i, value=val, feature_names=features)
+            left, right = partition(animals, question)
+            if(len(left) < min_samples_leaf or len(right) < min_samples_leaf): 
+                continue   # Go to next leaf if the leaf is too small
+            gain = info_gain(data, left, right)
+            if gain > best_gain:  # If the gain is higher than previous best
+                best_gain = gain
+                best_question = question
+    if best_question is None: return None
+    else: return best_gain, best_question
 
 # Problem 3
 class Leaf:
@@ -120,7 +145,7 @@ class Leaf:
     Attribute:
         prediction (dict): Dictionary of labels at the leaf"""
     def __init__(self, data):
-        raise NotImplementedError('Problem 3 Incomplete')
+        self.prediction = class_counts(data)
 
 class Decision_Node:
     """Tree node with a question
@@ -129,7 +154,9 @@ class Decision_Node:
         left (Decision_Node or Leaf): child branch
         right (Decision_Node or Leaf): child branch"""
     def __init__(self, question, left_branch, right_branch):
-        raise NotImplementedError('Problem 3 Incomplete')
+        self.question = question
+        self.left = left_branch
+        self.right = right_branch
 
 
 # Prolem 4
@@ -236,3 +263,27 @@ def draw_tree(my_tree, filename='Digraph'):
         os.system(f'cmd.exe /C start {filename}.gv.pdf')
     else:
         graph.render(view=True)
+
+
+if __name__=="__main__":
+    # Load in the data
+    animals = np.loadtxt("animals.csv", delimiter=",")
+    # Load in feature names
+    features = np.loadtxt("animal_features.csv", delimiter=",", dtype=str, comments=None)
+    # Load in sample names
+    names = np.loadtxt('animal_names.csv', delimiter=",", dtype=str)
+    
+    # Prob 1
+    # question = Question(column=1, value=3, feature_names=features)
+    # left, right = partition(animals, question)
+    # print(len(left), (len(right)))
+    
+    # question = Question(column=1, value=75, feature_names=features)
+    # left, right = partition(animals, question)
+    # print(len(left), (len(right)))
+    
+    # Prob 2
+    # print(find_best_split(animals, features))
+    
+    # Prob 3
+    leaf = Leaf(animals)
