@@ -121,22 +121,23 @@ def find_best_split(data, feature_names, min_samples_leaf=5, random_subset=False
     best_question = None
 
     # Get the indices of columns where values differ
-    # cols_with_diff = np.any(data != data[0, :], axis=0)
-    # indices = np.where(cols_with_diff)[0].tolist()[:-1]
     indices = np.arange(len(feature_names) - 1)
+    if random_subset:  # If we only want a random subset, randomly chose sqrt(n)
+        n = int(np.floor(np.sqrt(len(indices))))
+        indices = np.random.choice(indices, size=n, replace=False)
     
     for i in indices:  # For each column
         unique_vals = set(data[:, i])  # Set of unique values
         for val in unique_vals:    # For each row value
-            question = Question(column=i, value=val, feature_names=features)
-            left, right = partition(animals, question)
+            question = Question(column=i, value=val, feature_names=feature_names)
+            left, right = partition(data, question)
             if(len(left) < min_samples_leaf or len(right) < min_samples_leaf): 
                 continue   # Go to next leaf if the leaf is too small
             gain = info_gain(data, left, right)
             if gain > best_gain:  # If the gain is higher than previous best
                 best_gain = gain
                 best_question = question
-    if best_question is None: return None
+    if best_question is None: return None, None
     else: return best_gain, best_question
 
 # Problem 3
@@ -171,7 +172,26 @@ def build_tree(data, feature_names, min_samples_leaf=5, max_depth=4, current_dep
         random_subset (bool): whether or not to train on a random subset of features
     Returns:
         Decision_Node (or Leaf)"""
-    raise NotImplementedError('Problem 4 Incomplete')
+    if(len(data) < 2*min_samples_leaf):  # If no more splits are possible return leaf
+        return Leaf(data)
+    
+    best_gain, best_question = find_best_split(data, feature_names,  # Find the best split and gain from it
+                                    min_samples_leaf=min_samples_leaf, random_subset=random_subset) 
+    
+    if best_question is None or best_gain == 0 or current_depth >= max_depth:  # If no more gain or too deep, return leaf
+        return Leaf(data)
+    
+    left, right = partition(data, best_question)  # Split the data into left and right partitions
+
+    # Recursively define the right and left branch of the tree
+    left_node = build_tree(left, feature_names, min_samples_leaf=min_samples_leaf, max_depth=max_depth, 
+            current_depth=current_depth + 1, random_subset=random_subset)
+    right_node = build_tree(right, feature_names, min_samples_leaf=min_samples_leaf, max_depth=max_depth, 
+            current_depth=current_depth + 1, random_subset=random_subset)
+    
+    return Decision_Node(best_question, left_node, right_node)  # Return a decision node object
+
+    
 
 # Problem 5
 def predict_tree(sample, my_tree):
@@ -181,7 +201,13 @@ def predict_tree(sample, my_tree):
         my_tree (Decision_Node or Leaf): a decision tree
     Returns:
         Label to be assigned to new sample"""
-    raise NotImplementedError('Problem 5 Incomplete')
+    if isinstance(my_tree, Decision_Node):  # If not on leaf node, move down the tree
+        question = my_tree.question
+        if question.match(sample): return predict_tree(sample, my_tree.left)
+        else: return predict_tree(sample, my_tree.right)
+    elif isinstance(my_tree, Leaf):  # If it is a leaf node, return the label with the most samples
+        prediction = my_tree.prediction
+        return max(prediction, key=lambda k: prediction[k])
 
 def analyze_tree(dataset, my_tree):
     """Test how accurately a tree classifies a dataset
@@ -190,7 +216,13 @@ def analyze_tree(dataset, my_tree):
         tree (Decision_Node or Leaf): a decision tree
     Returns:
         (float): Proportion of dataset classified correctly"""
-    raise NotImplementedError('Problem 6 Incomplete')
+    num_correct = 0
+    total = 0
+    for sample in dataset: # Count how many predictions were correct
+        prediction = predict_tree(sample, my_tree)
+        if prediction == sample[-1]: num_correct += 1
+        total += 1
+    return num_correct / total
 
 # Problem 6
 def predict_forest(sample, forest):
@@ -200,7 +232,15 @@ def predict_forest(sample, forest):
         forest (list): a list of decision trees
     Returns:
         Label to be assigned to new sample"""
-    raise NotImplementedError('Problem 6 Incomplete')
+    votes = dict()
+    vote = None
+    for my_tree in forest:  # Get prediction for each tree and store
+        vote = predict_tree(sample, my_tree)
+        if vote in votes: votes[vote] += 1
+        else: votes[vote] = 1
+    prediction = max(votes, key=lambda k: votes[k])  # Pick the one with the most votes
+    return prediction
+    
 
 def analyze_forest(dataset, forest):
     """Test how accurately a forest classifies a dataset
@@ -209,7 +249,13 @@ def analyze_forest(dataset, forest):
         forest (list): list of decision trees
     Returns:
         (float): Proportion of dataset classified correctly"""
-    raise NotImplementedError('Problem 6 Incomplete')
+    num_correct = 0
+    total = 0
+    for sample in dataset: # Count how many predictions were correct
+        prediction = predict_forest(sample, forest)
+        if prediction == sample[-1]: num_correct += 1
+        total += 1
+    return num_correct / total
 
 # Problem 7
 def prob7():
@@ -228,7 +274,43 @@ def prob7():
             a) Scikit-Learn's accuracy in a forest with default parameters
             b) The time it took to run that forest with default parameters
     """
-    raise NotImplementedError('Problem 7 Incomplete')
+    # Load in the data
+    data = np.loadtxt("parkinsons.csv", delimiter=",")
+    # Load in feature names
+    features = np.loadtxt("parkinsons_features.csv", delimiter=",", dtype=str, comments=None)
+
+    # Randomly select 130 samples and split data
+    np.random.shuffle(data)
+    data = data[:130]
+    data = data[:, 1:] # Remove the first column (which is the ID)
+    train_data = data[:100]
+    test_data = data[100:]
+    
+    # Build my own forest
+    start = time()
+    my_forest = []
+    for i in range(5):
+        my_tree = build_tree(train_data, features, min_samples_leaf=15, max_depth=4, random_subset=True)   # Build tree from training set
+        my_forest.append(my_tree)
+    acc = analyze_forest(test_data, my_forest)
+    tuple1 = (acc, time() - start)
+    
+    # Use Sklearn Random forest with our parameters
+    start = time()
+    forest = RandomForestClassifier(n_estimators=1000, min_samples_leaf=15, max_depth=4)
+    forest.fit(train_data[:, :-1], train_data[:, -1])
+    acc = forest.score(test_data[:, :-1], test_data[:, -1])
+    tuple2 = (acc, time() - start)
+    
+    # Use Sklearn Random forest with default parameters
+    start = time()
+    forest = RandomForestClassifier()
+    forest.fit(train_data[:, :-1], train_data[:, -1])
+    acc = forest.score(test_data[:, :-1], test_data[:, -1])
+    tuple3 = (acc, time() - start)
+    
+    return tuple1, tuple2, tuple3
+    
 
 
 ## Code to draw a tree
@@ -286,4 +368,32 @@ if __name__=="__main__":
     # print(find_best_split(animals, features))
     
     # Prob 3
-    leaf = Leaf(animals)
+    # leaf = Leaf(animals)
+    # print(leaf.prediction)
+    
+    # Prob 4
+    # my_tree = build_tree(animals, features)
+    # draw_tree(my_tree)   # It won't output the drawing well, but that doesn't matter
+    
+    # Prob 5
+    # np.random.shuffle(animals)   # Getting training/test split
+    # train_data = animals[:80]
+    # test_data = animals[80:]
+    # my_tree = build_tree(train_data, features)   # Build tree from training set
+    # acc = analyze_tree(test_data, my_tree)   # Calculate the error
+    # print(acc)
+    
+    # Prob 6
+    # np.random.shuffle(animals)   # Getting training/test split
+    # train_data = animals[:80]
+    # test_data = animals[80:]
+    # my_forest = []
+    # for i in range(100):
+    #     my_tree = build_tree(train_data, features, random_subset=True)   # Build tree from training set
+    #     my_forest.append(my_tree)
+    # # draw_tree(my_forest[-1])
+    # acc = analyze_forest(test_data, my_forest)
+    # print(acc)
+    
+    # Prob 7
+    print(prob7())
