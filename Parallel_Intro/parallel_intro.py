@@ -12,7 +12,11 @@ def prob1():
     View with all available engines, and imports scipy.sparse as sparse on
     all engines. Return the DirectView.
     """
-    raise NotImplementedError("Problem 1 incomplete")
+    client = Client()  # Create a Client object
+    dview = client[:]  # Create a Direct view with all engines
+    dview.block = True
+    dview.execute("import scipy.sparse as sparse")
+    client.close()
 
 # Problem 2
 def prob2(n=1000000):
@@ -30,7 +34,25 @@ def prob2(n=1000000):
         mins (list of float): the minimum draws of each engine
         maxs (list of float): the maximum draws of each engine.
     """
-    raise NotImplementedError("Problem 2 incomplete")
+    def f(n):  # Function that samples and gets the mean, min, max
+        x = np.random.normal(0, 1, n)
+        return np.mean(x), np.min(x), np.max(x)
+    
+    client = Client()  # Create a Client object
+    dview = client[:]  # Create a Direct view with all engines
+    dview.block = True
+    
+    dview.execute("import numpy as np")  # Apply function to each process
+    output = dview.apply(f, n)
+    
+    # Correct output format
+    means = [result[0] for result in output]
+    mins = [result[1] for result in output]
+    maxs = [result[2] for result in output]
+    
+    client.close() # Close client
+    
+    return means, mins, maxs
 
 # Problem 3
 def prob3():
@@ -41,7 +63,37 @@ def prob3():
     function in a for loop N times, where N is the number of engines on your machine.
     Plot the execution times against n.
     """
-    raise NotImplementedError("Problem 3 incomplete")
+    ns = [1000000, 5000000, 10000000, 15000000]
+    times_par = []
+    for n in ns:  
+        # Time prob2 for each n
+        start = time.time()
+        means, mins, maxs = prob2(n)
+        end = time.time()
+        times_par.append(end - start)
+        
+    N = len(means)  # Determine the number of engines in the machine
+    
+    times_ser = []
+    for n in ns:
+        # Time serial version
+        start = time.time()
+        for i in range(N):
+            x = np.random.normal(0, 1, n)
+            np.mean(x)
+            np.min(x)
+            np.max(x)
+        end = time.time()
+        times_ser.append(end - start)
+    
+    print("grjn")
+    # Plot the stuff
+    plt.plot(ns, times_par, label="Parallel")
+    plt.plot(ns, times_par, label="Serial")
+    plt.legend()
+    plt.xlabel("n")
+    plt.ylabel("time (s)")
+    plt.show()
 
 # Problem 4
 def parallel_trapezoid_rule(f, a, b, n=200):
@@ -60,4 +112,64 @@ def parallel_trapezoid_rule(f, a, b, n=200):
         value (float): the approximate integral calculated by the
             trapezoidal rule
     """
-    raise NotImplementedError("Problem 4 incomplete")
+    xs = np.linspace(a, b, n)
+    client = Client()  # Create a Client object
+    dview = client[:]  # Create a Direct view with all engines
+    dview.block = True
+    N = len(client)    # Determine the number of agents
+        
+    # Split up the array so that the endpoints are shared
+    chunks = np.array_split(xs, N)  # Split array into N chunks
+    new_chunks = []
+    for i in range(len(chunks)):  # Add endpoints
+        chunk = chunks[i]
+        if i > 0: chunk = np.insert(chunk, 0, chunks[i-1][-1])
+        new_chunks.append(chunk)
+        
+    def trapezoidal_rule(xs):
+        sum = 0
+        h = xs[1] - xs[0]
+        m = len(xs)
+        for i in range(m - 1):
+            sum += f(xs[i]) + f(xs[i+1])  # Add things in the sum
+        return (h / 2) * sum
+    
+    dview.execute("import numpy as np")
+    dview.scatter("xs_small", new_chunks)  # Scatter the data to each engine
+    dview.push({"trapezoidal_rule": trapezoidal_rule})   # Send the function to each
+    dview.execute("sum = trapezoidal_rule(xs_small[0])")
+    outputs = dview["sum"]    
+    client.close() # Close client
+    
+    return np.sum(outputs)
+
+
+if __name__=="__main__":
+    # Problem 1
+    # prob1()
+    plt.plot()
+    plt.show()
+    
+    # Problem 2
+    # means, mins, maxs = prob2()
+    # print(means)
+    # print(mins)
+    # print(maxs)
+    
+    # Prob 3
+    # prob3() # PLOTTING NOT WORKING ANYMORE!!!!!!!!!!!!
+    
+    # Prob 4
+    # def f(x): return 3*x**2 - 2*np.sin(x) + 5.3
+    # a = -4
+    # b = 7
+    # sum = 0
+    # n = 100
+    # xs = np.linspace(a, b, n)
+    # h = xs[1] - xs[0]
+    # for i in range(n - 1):
+    #     sum += f(xs[i]) + f(xs[i+1])
+    # print("Serial method:", (h / 2) * sum)
+    # print("Parallel method:", parallel_trapezoid_rule(f, a, b, n=n))
+    
+    pass
