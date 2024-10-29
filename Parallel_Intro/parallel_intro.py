@@ -147,8 +147,6 @@ def parallel_trapezoid_rule(f, a, b, n=200):
 if __name__=="__main__":
     # Problem 1
     # prob1()
-    # plt.plot()
-    # plt.show()
     
     # Problem 2
     # means, mins, maxs = prob2()
@@ -157,7 +155,7 @@ if __name__=="__main__":
     # print(maxs)
     
     # Prob 3
-    prob3() # PLOTTING NOT WORKING ANYMORE!!!!!!!!!!!!
+    # prob3() 
     
     # Prob 4
     # def f(x): return 3*x**2 - 2*np.sin(x) + 5.3
