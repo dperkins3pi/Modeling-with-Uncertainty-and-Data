@@ -1,0 +1,47 @@
+11/01/24 20:01
+
+Problem 1 (10 points):
+Score += 10
+
+Problem 2 (10 points):
+Missing kenneth lonergan but I actually think your reasoning for masking him out is fine so I'll give you the points back.
+Score += 9
+
+Problem 3 (15 points):
+Score += 15
+
+Problem 4 (10 points):
+Score += 10
+
+Code Quality (5 points):
+Score += 5
+
+Total score: 49/50 = 98.0%
+
+Excellent!
+
+-------------------------------------------------------------------------------
+
+11/01/24 20:22
+
+Problem 1 (10 points):
+Score += 10
+
+Problem 2 (10 points):
+Score += 10
+
+Problem 3 (15 points):
+Score += 15
+
+Problem 4 (10 points):
+Score += 10
+
+Code Quality (5 points):
+Score += 5
+
+Total score: 50/50 = 100.0%
+
+Excellent!
+
+-------------------------------------------------------------------------------
+
