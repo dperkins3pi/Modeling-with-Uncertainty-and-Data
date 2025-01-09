@@ -2,7 +2,7 @@
 # Download data files and place them in the lab folders.
 
 SOURCE="https://github.com/Foundations-of-Applied-Mathematics/Data.git"
-LABS=("DataCleaning" "InformationTheory" "KMeans" "LSI_SkLearn" "LinearRegression" "Pandas1" "Pandas2" "Pandas3" "Pandas4" "RandomForest")
+LABS=("ARMA" "CDHMM" "DataCleaning" "GMM" "Gibbs_LDA" "HMM" "InformationTheory" "KMeans" "LSI_SkLearn" "LinearRegression" "Metropolis" "NMF_Recommender" "NaiveBayes" "Pandas1" "Pandas2" "Pandas3" "Pandas4" "RNN" "RandomForest" "Spark" "WebScraping")
 GIT="https://git-scm.com"
 TEMPDIR="_DATA_"`date +%s`"_"
 

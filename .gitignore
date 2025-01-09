@@ -1,11 +1,21 @@
 
 # Lab data files --------------------------------------------------------------
 
+ARMA/weather.npy
+CDHMM/Samples.zip
 DataCleaning/g_t_results.csv
 DataCleaning/imdb.csv
 DataCleaning/housing.csv
 DataCleaning/housing_data_description.txt
 DataCleaning/toy_dataset.csv
+GMM/gmm_data.npy
+GMM/classification.npz
+Gibbs_LDA/examscores.npy
+Gibbs_LDA/reagan.txt
+Gibbs_LDA/stopwords.txt
+HMM/declaration.txt
+HMM/WarAndPeace.txt
+HMM/stocks.npy
 InformationTheory/allowed_guesses.txt
 InformationTheory/possible_secret_words.txt
 InformationTheory/all_guess_results.npy.tar.gz
@@ -15,6 +25,10 @@ KMeans/sacramento.npy
 LSI_SkLearn/Addresses.zip
 LSI_SkLearn/stopwords.txt
 LinearRegression/realestate.csv
+Metropolis/examscores.npy
+NMF_Recommender/artists.csv
+NMF_Recommender/artist_user.csv
+NaiveBayes/sms_spam_collection.csv
 Pandas1/crime_data.csv
 Pandas1/budget.csv
 Pandas1/DJIA.csv
@@ -32,11 +46,19 @@ Pandas4/county_data.gpkg.zip
 Pandas4/nytimes.csv
 Pandas4/cities.gpkg.zip
 Pandas4/worldmap.gpkg.zip
+RNN/mozart_sonatas.tar.gz
 RandomForest/parkinsons.csv
 RandomForest/parkinsons_features.csv
 RandomForest/animals.csv
 RandomForest/animal_names.csv
 RandomForest/animal_features.csv
+Spark/titanic.csv
+Spark/huck_finn.txt
+Spark/london_income_by_borough.csv
+Spark/london_crime_by_lsoa.csv.tar.xz
+WebScraping/san_diego_weather.html
+WebScraping/large_banks_index.html
+WebScraping/large_banks_data.html
 
 # General Files ---------------------------------------------------------------
 
