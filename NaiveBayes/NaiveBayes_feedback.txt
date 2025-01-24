@@ -1,0 +1,56 @@
+01/23/25 23:21
+
+Problem 1 (5 points):
+Score += 5
+
+Problem 2 (5 points):
+Score += 5
+
+Problem 3 (5 points):
+Score += 5
+
+Problem 4 (5 points):
+Score += 5
+
+Problem 5 - fit() (5 points):
+Score += 5
+
+Problem 5 - predict_proba() (5 points):
+Score += 5
+
+Problem 5 - predict() (5 points):
+Score += 5
+
+Problem 6 (5 points):
+Score += 5
+
+Problem 7 (5 points):
+Score += 5
+
+Code Quality (5 points):
+Score += 5
+
+Total score: 50/50 = 100.0%
+
+Excellent!
+
+Linter Notes: 
+/Users/rental/Desktop/Work/Vol3_Grading2/DannyPerkins/NaiveBayes/naivebayes.py:43:25: E225 missing whitespace around operator
+/Users/rental/Desktop/Work/Vol3_Grading2/DannyPerkins/NaiveBayes/naivebayes.py:46:27: E225 missing whitespace around operator
+/Users/rental/Desktop/Work/Vol3_Grading2/DannyPerkins/NaiveBayes/naivebayes.py:109:24: E225 missing whitespace around operator
+/Users/rental/Desktop/Work/Vol3_Grading2/DannyPerkins/NaiveBayes/naivebayes.py:142:17: E225 missing whitespace around operator
+/Users/rental/Desktop/Work/Vol3_Grading2/DannyPerkins/NaiveBayes/naivebayes.py:144:21: E225 missing whitespace around operator
+/Users/rental/Desktop/Work/Vol3_Grading2/DannyPerkins/NaiveBayes/naivebayes.py:145:17: E225 missing whitespace around operator
+/Users/rental/Desktop/Work/Vol3_Grading2/DannyPerkins/NaiveBayes/naivebayes.py:147:21: E225 missing whitespace around operator
+/Users/rental/Desktop/Work/Vol3_Grading2/DannyPerkins/NaiveBayes/naivebayes.py:192:25: E225 missing whitespace around operator
+/Users/rental/Desktop/Work/Vol3_Grading2/DannyPerkins/NaiveBayes/naivebayes.py:195:27: E225 missing whitespace around operator
+/Users/rental/Desktop/Work/Vol3_Grading2/DannyPerkins/NaiveBayes/naivebayes.py:264:24: E225 missing whitespace around operator
+/Users/rental/Desktop/Work/Vol3_Grading2/DannyPerkins/NaiveBayes/naivebayes.py:297:17: E225 missing whitespace around operator
+/Users/rental/Desktop/Work/Vol3_Grading2/DannyPerkins/NaiveBayes/naivebayes.py:299:21: E225 missing whitespace around operator
+/Users/rental/Desktop/Work/Vol3_Grading2/DannyPerkins/NaiveBayes/naivebayes.py:300:17: E225 missing whitespace around operator
+/Users/rental/Desktop/Work/Vol3_Grading2/DannyPerkins/NaiveBayes/naivebayes.py:302:21: E225 missing whitespace around operator
+/Users/rental/Desktop/Work/Vol3_Grading2/DannyPerkins/NaiveBayes/naivebayes.py:339:12: E225 missing whitespace around operator
+
+
+-------------------------------------------------------------------------------
+
