@@ -8,8 +8,12 @@ class NMFRecommender:
         """
         Save the parameter values as attributes.
         """
-        raise NotImplementedError("Problem incomplete")
-  
+        # Initialize parameters
+        self.random_state = random_state
+        self.rank = rank
+        self.maxiter = maxiter
+        self.tol = tol
+
 
     def _initialize_matrices(self, m, n):
         """
@@ -22,7 +26,11 @@ class NMFRecommender:
             W ((m,k) array)
             H ((k,n) array)
         """
-        raise NotImplementedError("Problem incomplete")
+        np.random.seed(self.random_state)  # Set random seet
+        # Initialize matrices to values between 0 and 1
+        W = np.random.rand(m, self.rank)
+        H = np.random.rand(self.rank, n)
+        return W, H
 
 
     def _compute_loss(self, V, W, H):
@@ -37,7 +45,9 @@ class NMFRecommender:
         Returns:
             Frobenius norm of V - WH (float)
         """
-        raise NotImplementedError("Problem incomplete")
+        # Calculate the frobenius norm
+        frobenius_norm = np.linalg.norm(V - W @ H, ord='fro')
+        return frobenius_norm
 
 
     def _update_matrices(self, V, W, H):
@@ -91,11 +101,11 @@ def prob4(rank=2):
         The number of people with higher component 2 than component 1 scores (float)
     """
     V = np.array([[0, 1, 0, 1, 2, 2],
-                  [2, 3, 1, 1, 2, 2],
-                  [1, 1, 1, 0, 1, 1],
-                  [0, 2, 3, 4, 1, 1],
-                  [0, 0, 0, 0, 1, 0]])
-                  
+                [2, 3, 1, 1, 2, 2],
+                [1, 1, 1, 0, 1, 1],
+                [0, 2, 3, 4, 1, 1],
+                [0, 0, 0, 0, 1, 0]])
+                
     raise NotImplementedError("Problem incomplete")
 
 
@@ -124,4 +134,17 @@ def discover_weekly(userid, V):
     """
     raise NotImplementedError("Problem incomplete")
     
+    
+if __name__=="__main__":
+    
+    clf = NMFRecommender()
+    
+    # Prob 1
+    # m, n = 4, 3
+    # W, H = clf._initialize_matrices(m, n)
+    # print(W, H)
+    # frob_loss = clf._compute_loss(np.random.rand(m, n), W, H)
+    # print(frob_loss)
+    
+    # Prob 2
     
