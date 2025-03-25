@@ -1,0 +1,39 @@
+03/25/25 11:23
+
+Problem 1 (3 points):
+Score += 3
+
+Problem 2 (2 points):
+Score += 2
+
+Problem 3 (10 points):
+Score += 10
+
+Problem 4 (3 points):
+Score += 3
+
+Problem 5 (7 points):
+Score += 7
+
+Problem 6 (3 points):
+Score += 3
+
+Problem 7 (7 points):
+Score += 7
+
+Problem 8 (3 points):
+Score += 3
+
+Problem 9 (7 points):
+Score += 7
+
+Code Quality (5 points):
+I would put legends on your plots
+Score += 3
+
+Total score: 48/50 = 96.0%
+
+Great job!
+
+-------------------------------------------------------------------------------
+
